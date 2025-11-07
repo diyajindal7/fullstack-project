@@ -15,14 +15,22 @@ const CreateItemPage = () => {
       return;
     }
 
-    createItem(formData, user)
+    // Transform form data to match backend expectations
+    // Note: image_url column doesn't exist in database, so we skip it for now
+    const itemData = {
+      title: formData.title,
+      description: formData.description || '',
+      category_id: parseInt(formData.category)
+    };
+
+    createItem(itemData)
       .then(() => {
         alert("Thank you! Your item has been listed.");
         navigate('/dashboard');
       })
       .catch(err => {
         console.error(err);
-        alert("Failed to list item.");
+        alert("Failed to list item: " + (err.message || "Unknown error"));
       });
   };
 

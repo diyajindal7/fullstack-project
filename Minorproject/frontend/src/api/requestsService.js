@@ -41,6 +41,10 @@ export const getPendingRequests = async () => {
 export const createRequest = async (requestData) => {
   try {
     const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to create a request');
+    }
+
     const response = await fetch(`${API_BASE_URL}/api/requests/add`, {
       method: 'POST',
       headers: {
@@ -50,11 +54,26 @@ export const createRequest = async (requestData) => {
       body: JSON.stringify(requestData),
     });
 
-    const data = await response.json();
-    if (!response.ok) throw new Error(data.message || 'Failed to create request');
+    // Handle network errors
+    if (!response) {
+      throw new Error('Network error: Could not connect to server. Please check if the backend is running.');
+    }
+
+    const data = await response.json().catch(() => {
+      throw new Error(`Server error: Invalid response (${response.status})`);
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to create request: ${response.status}`);
+    }
+    
     return data;
   } catch (error) {
     console.error('Error creating request:', error);
+    // Re-throw with a more user-friendly message if it's a network error
+    if (error.message.includes('Failed to fetch') || error.message.includes('NetworkError')) {
+      throw new Error('Network error: Could not connect to server. Please check if the backend is running on port 5000.');
+    }
     throw error;
   }
 };

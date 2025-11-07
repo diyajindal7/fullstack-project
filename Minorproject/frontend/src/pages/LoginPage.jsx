@@ -10,6 +10,8 @@ const LoginPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('individual');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   
   const { user, login } = useAuth();
   const navigate = useNavigate();
@@ -23,11 +25,18 @@ const LoginPage = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (event) => { // Make this async
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // Call the new login function with all arguments
-    await login(email, password, userType);
-    // The useEffect will handle the redirect
+    setError('');
+    setLoading(true);
+    
+    try {
+      await login(email, password, userType);
+      // The useEffect will handle the redirect
+    } catch (err) {
+      setError(err.message || 'Login failed. Please check your credentials.');
+      setLoading(false);
+    }
   };
 
   // --- Styles (no changes) ---
@@ -58,12 +67,18 @@ const LoginPage = () => {
     <div>
       <form onSubmit={handleSubmit} className={styles.formContainer} style={formStyle}>
         <h1 className={styles.title} style={{ textAlign: 'center' }}>Login</h1>
+        {error && (
+          <div style={{ color: 'red', marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>
+            {error}
+          </div>
+        )}
         <Input
           label="Email"
           type="email"
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <Input
           label="Password"
@@ -71,6 +86,7 @@ const LoginPage = () => {
           placeholder="Enter your password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <div>
           <label className={styles.selectLabel} style={labelStyle}>Login as</label>
@@ -85,8 +101,8 @@ const LoginPage = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <Button type="submit" variant="primary">
-          Login
+        <Button type="submit" variant="primary" disabled={loading}>
+          {loading ? 'Logging in...' : 'Login'}
         </Button>
       </form>
     </div>

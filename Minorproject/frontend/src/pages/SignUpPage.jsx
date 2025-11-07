@@ -10,8 +10,10 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('individual');
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
   
-  const { user, signup } = useAuth(); // 1. Get the new 'signup' function
+  const { user, signup, login } = useAuth();
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -23,11 +25,22 @@ const SignUpPage = () => {
     }
   }, [user, navigate]);
 
-  const handleSubmit = async (event) => { // Make this async
+  const handleSubmit = async (event) => {
     event.preventDefault();
-    // 2. Call the new signup function with all arguments
-    await signup(name, email, password, userType);
-    // The useEffect will handle the redirect
+    setError('');
+    setLoading(true);
+    
+    try {
+      // Sign up the user
+      await signup(name, email, password, userType);
+      
+      // After successful signup, automatically log them in
+      await login(email, password, userType);
+      // The useEffect will handle the redirect
+    } catch (err) {
+      setError(err.message || 'Signup failed. Please try again.');
+      setLoading(false);
+    }
   };
 
   // --- Styles (no changes) ---
@@ -58,12 +71,18 @@ const SignUpPage = () => {
     <div>
       <form onSubmit={handleSubmit} style={formStyle}>
         <h1 style={{ textAlign: 'center' }}>Create an Account</h1>
+        {error && (
+          <div style={{ color: 'red', marginBottom: '1rem', padding: '0.5rem', backgroundColor: '#ffe6e6', borderRadius: '4px' }}>
+            {error}
+          </div>
+        )}
         <Input
           label="Name"
           type="text"
           placeholder="Enter your full name"
           value={name}
           onChange={(e) => setName(e.target.value)}
+          required
         />
         <Input
           label="Email"
@@ -71,6 +90,7 @@ const SignUpPage = () => {
           placeholder="Enter your email"
           value={email}
           onChange={(e) => setEmail(e.target.value)}
+          required
         />
         <Input
           label="Password"
@@ -78,6 +98,7 @@ const SignUpPage = () => {
           placeholder="Create a password"
           value={password}
           onChange={(e) => setPassword(e.target.value)}
+          required
         />
         <div>
           <label style={labelStyle}>Sign up as</label>
@@ -91,8 +112,8 @@ const SignUpPage = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
-        <Button type="submit" variant="secondary">
-          Sign Up
+        <Button type="submit" variant="secondary" disabled={loading}>
+          {loading ? 'Creating account...' : 'Sign Up'}
         </Button>
       </form>
     </div>

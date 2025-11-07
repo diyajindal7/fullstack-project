@@ -15,13 +15,29 @@ router.post('/', async (req, res) => {
   }
 
   try {
+    // Check if email already exists
+    const [existing] = await db.query('SELECT id FROM users WHERE email = ?', [email]);
+    if (existing.length > 0) {
+      return res.status(409).json({ message: 'Email already registered. Please use a different email or login.' });
+    }
+
     const [result] = await db.query(
       'INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)',
       [name, email, password, user_type || 'individual']
     );
-    res.status(201).json({ message: 'User created successfully', id: result.insertId });
+    res.status(201).json({ 
+      success: true,
+      message: 'User created successfully', 
+      id: result.insertId 
+    });
   } catch (error) {
     console.error('❌ Error creating user:', error);
+    
+    // Handle duplicate email error
+    if (error.code === 'ER_DUP_ENTRY' || error.errno === 1062) {
+      return res.status(409).json({ message: 'Email already registered. Please use a different email or login.' });
+    }
+    
     res.status(500).json({ message: 'Internal Server Error' });
   }
 });
@@ -107,7 +123,7 @@ const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
 router.post('/login', async (req, res) => {
-  const { email, password } = req.body;
+  const { email, password, userType } = req.body;
 
   if (!email || !password) {
     return res.status(400).json({ message: 'Email and password are required.' });
@@ -125,6 +141,13 @@ router.post('/login', async (req, res) => {
     // (Optional) Use bcrypt.compare() if you hash passwords later
     if (user.password !== password) {
       return res.status(401).json({ message: 'Invalid email or password' });
+    }
+
+    // Optional: Validate userType matches if provided (for better UX)
+    if (userType && user.user_type !== userType) {
+      return res.status(403).json({ 
+        message: `This account is registered as ${user.user_type}, not ${userType}. Please select the correct user type.` 
+      });
     }
 
     // ✅ Generate JWT Token

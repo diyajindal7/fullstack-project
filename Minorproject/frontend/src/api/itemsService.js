@@ -39,10 +39,10 @@ export const createItem = async (itemData) => {
     const response = await fetch(`${API_BASE_URL}/api/items/add`, {
       method: 'POST',
       headers: {
+        'Content-Type': 'application/json',
         'Authorization': `Bearer ${token}`,
-        // ⚠️ No 'Content-Type' header here — because itemData should be FormData (for image uploads)
       },
-      body: itemData,
+      body: JSON.stringify(itemData),
     });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || "Failed to create item");

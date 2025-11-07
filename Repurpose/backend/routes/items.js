@@ -75,7 +75,7 @@ router.get('/:id', async (req, res, next) => {
 // ======================
 router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
   try {
-    const { title, description, category_id, location, image_url } = req.validated;
+    const { title, description, category_id } = req.validated;
 
     if (!title || !category_id) {
       return res.status(400).json({
@@ -84,10 +84,11 @@ router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
       });
     }
 
+    // Insert without image_url and location columns
     const query = `
       INSERT INTO items 
-      (title, description, category_id, user_id, location, image_url) 
-      VALUES (?, ?, ?, ?, ?, ?)
+      (title, description, category_id, user_id) 
+      VALUES (?, ?, ?, ?)
     `;
 
     const [results] = await db.query(query, [
@@ -95,8 +96,6 @@ router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
       description || '',
       category_id,
       req.user.id,
-      location || '',
-      image_url || '',
     ]);
 
     res.status(201).json({
@@ -115,7 +114,7 @@ router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
 router.put('/:id', auth(), async (req, res, next) => {
   try {
     const itemId = req.params.id;
-    const { title, description, category_id, location, image_url } = req.body;
+    const { title, description, category_id } = req.body;
 
     const [check] = await db.query('SELECT * FROM items WHERE id = ? AND user_id = ?', [
       itemId,
@@ -130,7 +129,7 @@ router.put('/:id', auth(), async (req, res, next) => {
 
     const updateQuery = `
       UPDATE items 
-      SET title = ?, description = ?, category_id = ?, location = ?, image_url = ?
+      SET title = ?, description = ?, category_id = ?
       WHERE id = ? AND user_id = ?
     `;
 
@@ -138,8 +137,6 @@ router.put('/:id', auth(), async (req, res, next) => {
       title,
       description,
       category_id,
-      location,
-      image_url,
       itemId,
       req.user.id,
     ]);

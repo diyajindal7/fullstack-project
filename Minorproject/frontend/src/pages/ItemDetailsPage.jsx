@@ -22,11 +22,24 @@ const ItemDetailsPage = () => {
       .catch(error => console.error("Failed to fetch item:", error));
   }, [itemId]);
 
-  const handleRequest = () => {
-    createRequest(item, user).then(() => {
+  const handleRequest = async () => {
+    try {
+      if (!item || !item.id) {
+        alert("Error: Item information is missing");
+        return;
+      }
+      
+      const requestData = {
+        item_id: item.id
+      };
+      
+      await createRequest(requestData);
       setIsRequested(true);
       alert("Your request has been submitted!");
-    });
+    } catch (error) {
+      console.error("Error creating request:", error);
+      alert("Failed to submit request: " + (error.message || "Unknown error"));
+    }
   };
 
   // --- Styles ---
