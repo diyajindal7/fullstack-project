@@ -1,0 +1,38 @@
+/* src/pages/ContactPage.module.css */
+.container {
+  max-width: 600px;
+  margin: 0 auto;
+  padding: 2rem;
+  background-color: #fff;
+  border-radius: 8px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+.container h1 {
+  text-align: center;
+  color: var(--primary-color);
+}
+
+.subtitle {
+  text-align: center;
+  margin-bottom: 2rem;
+  color: var(--light-text);
+}
+
+.label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: 500;
+}
+
+.textarea {
+  display: 'block';
+  width: 100%;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  box-sizing: border-box;
+  font-size: 1rem;
+  font-family: 'Inter', sans-serif;
+  margin-bottom: 1.25rem;
+}

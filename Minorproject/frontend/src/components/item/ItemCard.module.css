@@ -1,0 +1,73 @@
+/* src/components/item/ItemCard.module.css */
+
+.card {
+  text-align: left;
+}
+
+.itemImage {
+  height: 200px;
+  width: 100%;
+  object-fit: cover; /* This makes the image cover the area */
+  border-bottom: 1px solid var(--border-color);
+  background-color: #eee; /* Fallback color */
+}
+
+.content {
+  padding: 1.25rem;
+}
+
+.title {
+  margin-bottom: 0.5rem;
+  font-size: 1.25rem;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.description {
+  margin-bottom: 1rem;
+  color: var(--light-text);
+  font-size: 0.9rem;
+  /* Truncate long descriptions */
+  display: -webkit-box;
+  -webkit-line-clamp: 2; /* Show 2 lines (for WebKit) */
+  line-clamp: 2;            /* <-- THIS IS THE NEW LINE YOU NEED TO ADD */
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+}
+
+.tagsContainer {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.categoryTag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  background-color: var(--primary-color);
+  color: #fff;
+}
+
+.statusTag {
+  display: inline-block;
+  padding: 4px 12px;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 500;
+  color: #fff;
+}
+
+.buttonGroup {
+  display: flex;
+  gap: 0.5rem;
+  margin-top: 1rem;
+}
+
+.buttonWrapper {
+  flex: 1;
+}
+

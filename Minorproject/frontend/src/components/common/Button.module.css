@@ -1,0 +1,42 @@
+/* src/components/common/Button.module.css */
+
+.btn {
+  width: 100%;
+  padding: 12px 24px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 8px; /* Softer corners */
+  cursor: pointer;
+  transition: all 0.2s ease-in-out;
+  color: white;
+}
+
+.btn:hover {
+  transform: translateY(-2px); /* Lifts the button on hover */
+  box-shadow: 0 4px 8px var(--shadow-color);
+}
+
+/* --- Variants --- */
+
+.primary {
+  background-color: var(--primary-color);
+}
+.primary:hover {
+  background-color: var(--primary-hover);
+}
+
+/* This is our colourful "call to action" button */
+.secondary {
+  background-color: var(--secondary-color);
+}
+.secondary:hover {
+  background-color: var(--secondary-hover);
+}
+
+.danger {
+  background-color: var(--danger-color);
+}
+.danger:hover {
+  background-color: #a71d2a;
+}

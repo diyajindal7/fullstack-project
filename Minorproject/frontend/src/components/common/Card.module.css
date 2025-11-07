@@ -1,0 +1,14 @@
+/* src/components/common/Card.module.css */
+.card {
+  border: 1px solid var(--border-color);
+  border-radius: 12px; /* Softer corners */
+  box-shadow: 0 4px 8px var(--shadow-color);
+  background: #fff;
+  transition: all 0.2s ease-in-out;
+  overflow: hidden; /* This is key for rounded corners on images */
+}
+
+.card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+}

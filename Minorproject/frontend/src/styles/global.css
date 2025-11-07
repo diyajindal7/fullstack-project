@@ -1,0 +1,63 @@
+/* src/styles/global.css */
+
+/* 1. Import a clean, modern font */
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+
+/* 2. Define your new vibrant color theme */
+:root {
+  /* Primary (Brand, Links, Main Buttons) */
+  --primary-color: #4C51BF; /* New Indigo */
+  --primary-hover: #434190; /* Darker Indigo */
+
+  /* Secondary (Call-to-Action, Donate, Sign Up) */
+  --secondary-color: #84CC16; /* New Lime Green */
+  --secondary-hover: #65A30D; /* Darker Lime Green */
+
+  /* Neutrals */
+  --light-bg: #f8f9fa;      /* This is your light gray background */
+  --dark-text: #212529;
+  --light-text: #6c757d;
+  --border-color: #dee2e6;
+  --shadow-color: rgba(0, 0, 0, 0.08);
+
+  /* Functional Colors (for alerts, tags, etc.) */
+  --success-color: #28a745;
+  --danger-color: #dc3545;
+  --admin-color: #6a1b9a; /* A deep purple for admin */
+}
+
+/* 3. A basic CSS reset */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+/* 4. Set global styles */
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--light-bg); /* Using the light gray background */
+  color: var(--dark-text);
+  line-height: 1.6;
+}
+
+main {
+  /* Adds consistent spacing to your main content area */
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 0 1rem;
+}
+
+h1, h2, h3 {
+  margin-bottom: 1rem;
+  line-height: 1.2;
+}
+
+a {
+  color: var(--primary-color);
+  text-decoration: none;
+}
+
+a:hover {
+  text-decoration: underline;
+}

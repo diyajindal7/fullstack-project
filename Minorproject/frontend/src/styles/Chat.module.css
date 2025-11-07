@@ -1,0 +1,105 @@
+/* src/styles/Chat.module.css */
+
+.chatPage {
+  max-width: 800px;
+  margin: 0 auto;
+}
+
+.title {
+  text-align: center;
+  color: var(--primary-color);
+  margin-bottom: 1.5rem;
+}
+
+.chatContainer {
+  display: flex;
+  flex-direction: column;
+  height: 70vh; /* Fixed height for the chat box */
+  background: #fff;
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 8px var(--shadow-color);
+  overflow: hidden;
+}
+
+.messageArea {
+  flex-grow: 1; /* Makes messages take all available space */
+  padding: 1.5rem;
+  overflow-y: auto; /* Scrollable messages */
+}
+
+.inputArea {
+  display: flex;
+  padding: 1rem;
+  border-top: 1px solid var(--border-color);
+  background-color: #f8f9fa;
+}
+
+.inputArea input {
+  flex-grow: 1;
+  padding: 12px;
+  border-radius: 4px;
+  border: 1px solid var(--border-color);
+  font-size: 1rem;
+  margin-right: 0.5rem;
+}
+
+.inputArea button {
+  width: 100px;
+  padding: 12px;
+  font-size: 1rem;
+  font-weight: 500;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  color: white;
+  background-color: var(--primary-color);
+  transition: background-color 0.2s;
+}
+
+.inputArea button:hover {
+  background-color: var(--primary-hover);
+}
+
+.messageBubble {
+  display: flex;
+  flex-direction: column;
+  margin-bottom: 0.5rem;
+}
+
+.messageContent {
+  padding: 0.75rem 1rem;
+  border-radius: 18px;
+  max-width: 70%;
+  line-height: 1.4;
+}
+
+/* Style for your own messages */
+.myMessage {
+  align-self: flex-end; /* Aligns your message to the right */
+  background-color: var(--primary-color);
+  color: white;
+  border-bottom-right-radius: 4px;
+}
+
+/* Style for their messages */
+.theirMessage {
+  align-self: flex-start; /* Aligns their message to the left */
+  background-color: #f0f0f0;
+  color: var(--dark-text);
+  border-bottom-left-radius: 4px;
+}
+
+.time {
+  font-size: 0.75rem;
+  color: var(--light-text);
+  margin-top: 4px;
+}
+
+/* Align time based on sender */
+.myMessage + .time {
+  align-self: flex-end;
+}
+.theirMessage + .time {
+  align-self: flex-start;
+}

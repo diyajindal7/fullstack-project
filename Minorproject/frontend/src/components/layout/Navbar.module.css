@@ -1,0 +1,41 @@
+/* src/components/layout/Navbar.module.css */
+
+.navbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1.25rem 2rem;
+  background-color: #fff;
+  box-shadow: 0 2px 4px var(--shadow-color);
+  margin-bottom: 2rem;
+  position: sticky; /* Sticks to the top on scroll */
+  top: 0;
+  z-index: 1000;
+}
+
+.brand {
+  font-weight: 700;
+  font-size: 1.5rem;
+  color: var(--primary-color); /* Use our brand color */
+  text-decoration: none;
+}
+.brand:hover {
+  text-decoration: none;
+  color: var(--primary-hover);
+}
+
+.navLinks a,
+.navLinks span {
+  margin: 0 12px;
+  font-weight: 500;
+  color: var(--dark-text);
+  text-decoration: none;
+  transition: color 0.2s ease;
+  cursor: pointer;
+}
+
+.navLinks a:hover,
+.navLinks span:hover {
+  color: var(--primary-color);
+  text-decoration: none;
+}
