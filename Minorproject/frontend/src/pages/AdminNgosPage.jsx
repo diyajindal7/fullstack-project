@@ -15,19 +15,26 @@ const AdminNgosPage = () => {
       getAllRequests()
     ])
     .then(([ngoData, requestData]) => {
-      setNgos(ngoData);
-      setRequests(requestData);
+      console.log('NGOs data:', ngoData);
+      console.log('Requests data:', requestData);
+      setNgos(ngoData || []);
+      setRequests(requestData || []);
       setLoading(false);
     })
     .catch(err => {
-      console.error(err);
+      console.error('Error loading NGOs page:', err);
+      alert('Failed to load NGOs: ' + (err.message || 'Unknown error'));
       setLoading(false);
     });
   }, []);
 
   // Helper function to find requests for a specific NGO
   const getRequestsForNgo = (ngoId) => {
-    return requests.filter(req => req.requester.id === ngoId);
+    return requests.filter(req => {
+      // Backend returns requester_id or requester_name, check both
+      return req.requester_id === ngoId || 
+             (req.requester && req.requester.id === ngoId);
+    });
   };
 
   if (loading) {
@@ -52,23 +59,26 @@ const AdminNgosPage = () => {
   return (
     <div>
       <h1>Manage NGOs (Requesters)</h1>
-      <ul style={listStyle}>
-        {ngos.map(ngo => {
-          // Get the requests for this specific NGO
-          const ngoRequests = getRequestsForNgo(ngo.id);
-          return (
-            <li key={ngo.id} style={itemStyle}>
-              <div>
-                <strong style={{fontSize: '1.2rem'}}>{ngo.name}</strong>
-                <br />
-                <small>{ngo.email}</small>
+      {ngos.length === 0 ? (
+        <p>No NGOs found.</p>
+      ) : (
+        <ul style={listStyle}>
+          {ngos.map(ngo => {
+            // Get the requests for this specific NGO
+            const ngoRequests = getRequestsForNgo(ngo.id);
+            return (
+              <li key={ngo.id} style={itemStyle}>
+                <div>
+                  <strong style={{fontSize: '1.2rem'}}>{ngo.name}</strong>
+                  <br />
+                  <small>{ngo.email}</small>
 
                 {/* Display the nested list of requests */}
                 {ngoRequests.length > 0 ? (
                   <ul style={nestedListStyle}>
                     {ngoRequests.map(req => (
                       <li key={req.id}>
-                        {req.item.title} - <small>Status: {req.status}</small>
+                        {req.item_title || (req.item && req.item.title) || 'Unknown Item'} - <small>Status: {req.status || 'pending'}</small>
                       </li>
                     ))}
                   </ul>
@@ -77,11 +87,12 @@ const AdminNgosPage = () => {
                     <small>No requests yet.</small>
                   </p>
                 )}
-              </div>
-            </li>
-          );
-        })}
-      </ul>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+      )}
     </div>
   );
 };

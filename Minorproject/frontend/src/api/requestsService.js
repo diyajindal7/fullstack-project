@@ -105,41 +105,112 @@ export const updateRequestStatus = async (requestId, newStatus) => {
 };
 
 /**
- * ✅ Approve a request (wrapper for updateRequestStatus)
+ * ✅ Approve a request (admin only)
  */
 export const approveRequest = async (requestId) => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/approve`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Failed to approve request');
-  return data;
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to approve requests');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/requests/${requestId}/approve`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response) {
+      throw new Error('Network error: Could not connect to server');
+    }
+
+    const data = await response.json().catch(() => {
+      throw new Error(`Server error: Invalid response (${response.status})`);
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to approve request: ${response.status}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error approving request:', error);
+    throw error;
+  }
 };
 
 /**
- * ✅ Reject a request (wrapper for updateRequestStatus)
+ * ✅ Reject a request (admin only)
  */
 export const rejectRequest = async (requestId) => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/reject`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Failed to reject request');
-  return data;
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to reject requests');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/requests/${requestId}/reject`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response) {
+      throw new Error('Network error: Could not connect to server');
+    }
+
+    const data = await response.json().catch(() => {
+      throw new Error(`Server error: Invalid response (${response.status})`);
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to reject request: ${response.status}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error rejecting request:', error);
+    throw error;
+  }
 };
 
-// ✅ Complete a request (admin)
+/**
+ * ✅ Complete a request (admin only)
+ */
 export const completeRequest = async (requestId) => {
-  const token = localStorage.getItem('token');
-  const res = await fetch(`${API_BASE_URL}/api/requests/${requestId}/complete`, {
-    method: 'PUT',
-    headers: { Authorization: `Bearer ${token}` },
-  });
-  const data = await res.json();
-  if (!res.ok) throw new Error(data.message || 'Failed to complete request');
-  return data;
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to complete requests');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/requests/${requestId}/complete`, {
+      method: 'PUT',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response) {
+      throw new Error('Network error: Could not connect to server');
+    }
+
+    const data = await response.json().catch(() => {
+      throw new Error(`Server error: Invalid response (${response.status})`);
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to complete request: ${response.status}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error completing request:', error);
+    throw error;
+  }
 };

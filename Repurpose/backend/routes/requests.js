@@ -103,19 +103,64 @@ router.put('/:id/status', auth('admin'), async (req, res, next) => {
 // ======================
 // Admin shortcuts for status updates
 // ======================
-router.put('/:id/approve', auth('admin'), (req, res, next) => {
-    req.body.status = 'approved';
-    return router.handle({ ...req, url: `/${req.params.id}/status`, method: 'PUT' }, res, next);
+router.put('/:id/approve', auth('admin'), async (req, res, next) => {
+    try {
+        const requestId = req.params.id;
+        const status = 'approved';
+
+        // Check if request exists before updating
+        const [checkResults] = await db.query('SELECT * FROM requests WHERE id = ?', [requestId]);
+        if (checkResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        const updateQuery = 'UPDATE requests SET status = ? WHERE id = ?';
+        await db.query(updateQuery, [status, requestId]);
+        
+        res.json({ success: true, message: `Request approved successfully` });
+    } catch (err) {
+        next(err);
+    }
 });
 
-router.put('/:id/reject', auth('admin'), (req, res, next) => {
-    req.body.status = 'rejected';
-    return router.handle({ ...req, url: `/${req.params.id}/status`, method: 'PUT' }, res, next);
+router.put('/:id/reject', auth('admin'), async (req, res, next) => {
+    try {
+        const requestId = req.params.id;
+        const status = 'rejected';
+
+        // Check if request exists before updating
+        const [checkResults] = await db.query('SELECT * FROM requests WHERE id = ?', [requestId]);
+        if (checkResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        const updateQuery = 'UPDATE requests SET status = ? WHERE id = ?';
+        await db.query(updateQuery, [status, requestId]);
+        
+        res.json({ success: true, message: `Request rejected successfully` });
+    } catch (err) {
+        next(err);
+    }
 });
 
-router.put('/:id/complete', auth('admin'), (req, res, next) => {
-    req.body.status = 'completed';
-    return router.handle({ ...req, url: `/${req.params.id}/status`, method: 'PUT' }, res, next);
+router.put('/:id/complete', auth('admin'), async (req, res, next) => {
+    try {
+        const requestId = req.params.id;
+        const status = 'completed';
+
+        // Check if request exists before updating
+        const [checkResults] = await db.query('SELECT * FROM requests WHERE id = ?', [requestId]);
+        if (checkResults.length === 0) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        const updateQuery = 'UPDATE requests SET status = ? WHERE id = ?';
+        await db.query(updateQuery, [status, requestId]);
+        
+        res.json({ success: true, message: `Request marked as completed successfully` });
+    } catch (err) {
+        next(err);
+    }
 });
 
 module.exports = router;

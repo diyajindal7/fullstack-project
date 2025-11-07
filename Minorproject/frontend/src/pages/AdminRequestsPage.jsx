@@ -25,16 +25,37 @@ const AdminRequestsPage = () => {
     loadRequests();
   }, []);
 
-  const handleApprove = (id) => {
-    approveRequest(id).then(() => loadRequests()); // Refresh list
+  const handleApprove = async (id) => {
+    try {
+      await approveRequest(id);
+      alert('Request approved successfully!');
+      loadRequests(); // Refresh list
+    } catch (error) {
+      console.error('Error approving request:', error);
+      alert('Failed to approve request: ' + (error.message || 'Unknown error'));
+    }
   };
 
-  const handleReject = (id) => {
-    rejectRequest(id).then(() => loadRequests()); // Refresh list
+  const handleReject = async (id) => {
+    try {
+      await rejectRequest(id);
+      alert('Request rejected successfully!');
+      loadRequests(); // Refresh list
+    } catch (error) {
+      console.error('Error rejecting request:', error);
+      alert('Failed to reject request: ' + (error.message || 'Unknown error'));
+    }
   };
 
-  const handleComplete = (id) => {
-    completeRequest(id).then(() => loadRequests());
+  const handleComplete = async (id) => {
+    try {
+      await completeRequest(id);
+      alert('Request marked as completed successfully!');
+      loadRequests(); // Refresh list
+    } catch (error) {
+      console.error('Error completing request:', error);
+      alert('Failed to complete request: ' + (error.message || 'Unknown error'));
+    }
   };
 
   if (loading) {
