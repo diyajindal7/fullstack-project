@@ -98,7 +98,8 @@ router.put('/:id', auth(), async (req, res) => {
   const { id } = req.params;
   const { name, email, password, user_type, location } = req.body;
   const currentUserId = req.user.id;
-  const isAdmin = req.user.role === 'admin';
+  // Check if user is admin - role can be 'admin' or user_type can be 'admin'
+  const isAdmin = req.user.role === 'admin' || req.user.user_type === 'admin';
 
   // Users can only update their own profile (unless admin)
   if (parseInt(id) !== currentUserId && !isAdmin) {
@@ -138,6 +139,9 @@ router.put('/:id', auth(), async (req, res) => {
     values.push(id);
 
     const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+    console.log('Update query:', query);
+    console.log('Update values:', values);
+    
     const [result] = await db.query(query, values);
 
     if (result.affectedRows === 0) {
@@ -147,7 +151,24 @@ router.put('/:id', auth(), async (req, res) => {
     res.json({ message: 'User updated successfully' });
   } catch (error) {
     console.error('❌ Error updating user:', error);
-    res.status(500).json({ message: 'Internal Server Error' });
+    console.error('Error details:', {
+      code: error.code,
+      errno: error.errno,
+      sqlState: error.sqlState,
+      sqlMessage: error.sqlMessage
+    });
+    
+    // Provide more specific error messages
+    if (error.code === 'ER_BAD_FIELD_ERROR') {
+      return res.status(500).json({ 
+        message: 'Database schema error: ' + (error.sqlMessage || 'Column not found') 
+      });
+    }
+    
+    res.status(500).json({ 
+      message: 'Internal Server Error: ' + (error.message || 'Unknown error'),
+      details: process.env.NODE_ENV === 'development' ? error.message : undefined
+    });
   }
 });
 

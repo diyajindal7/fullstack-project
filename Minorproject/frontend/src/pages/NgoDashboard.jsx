@@ -21,37 +21,56 @@ const NgoDashboard = () => {
 
   const handleUpdateLocation = async (e) => {
     e.preventDefault();
+    
+    if (!location || location.trim() === '') {
+      setMessage('Please enter a location');
+      return;
+    }
+    
     setLoading(true);
     setMessage('');
 
     try {
       const token = localStorage.getItem('token');
+      if (!token) {
+        throw new Error('You must be logged in to update location');
+      }
+
+      if (!user || !user.id) {
+        throw new Error('User information is missing. Please log out and log back in.');
+      }
+
+      console.log('Updating location for user:', user.id, 'Location:', location);
+      
       const response = await fetch(`${API_BASE_URL}/api/users/${user.id}`, {
         method: 'PUT',
         headers: {
           'Content-Type': 'application/json',
           'Authorization': `Bearer ${token}`,
         },
-        body: JSON.stringify({ location }),
+        body: JSON.stringify({ location: location.trim() }),
       });
 
+      const responseData = await response.json().catch(() => ({}));
+      
       if (!response.ok) {
-        const errorData = await response.json().catch(() => ({}));
-        throw new Error(errorData.message || 'Failed to update location');
+        throw new Error(responseData.message || `Failed to update location: ${response.status}`);
       }
 
-      const data = await response.json();
       setMessage('Location updated successfully!');
       
       // Update user in context
       if (setUser) {
-        setUser({ ...user, location });
+        setUser({ ...user, location: location.trim() });
       }
       
       // Update localStorage
       const userData = JSON.parse(localStorage.getItem('user') || '{}');
-      userData.location = location;
+      userData.location = location.trim();
       localStorage.setItem('user', JSON.stringify(userData));
+      
+      // Clear message after 3 seconds
+      setTimeout(() => setMessage(''), 3000);
     } catch (error) {
       console.error('Error updating location:', error);
       setMessage('Failed to update location: ' + (error.message || 'Unknown error'));

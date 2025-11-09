@@ -188,6 +188,7 @@ router.get('/admin/all', auth('admin'), async (req, res, next) => {
       SELECT items.*, users.name AS owner
       FROM items
       JOIN users ON items.user_id = users.id
+      ORDER BY items.created_at DESC
     `);
     res.json({ success: true, items: results });
   } catch (err) {

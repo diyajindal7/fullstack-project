@@ -23,6 +23,31 @@ export const getAllRequests = async () => {
 };
 
 /**
+ * ✅ Get requests for current user (NGO or individual)
+ */
+export const getMyRequests = async () => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to view your requests');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/requests/my-requests`, {
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    const data = await response.json();
+    if (!response.ok) throw new Error(data.message || 'Failed to fetch your requests');
+    return data.requests;
+  } catch (error) {
+    console.error('Error fetching my requests:', error);
+    throw error;
+  }
+};
+
+/**
  * ✅ Get only pending requests (for Admin Dashboard)
  */
 export const getPendingRequests = async () => {

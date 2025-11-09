@@ -43,6 +43,29 @@ router.get('/pending', auth('admin'), async (req, res, next) => {
 });
 
 // ======================
+// GET requests for current user (NGO or individual)
+// ======================
+router.get('/my-requests', auth(), async (req, res, next) => {
+    try {
+        const currentUserId = req.user.id;
+        const query = `
+            SELECT r.*, u.name AS requester_name, i.title AS item_title, 
+                   i.description AS item_description, 
+                   COALESCE(i.location, '') AS item_location
+            FROM requests r
+            JOIN users u ON r.requester_id = u.id
+            JOIN items i ON r.item_id = i.id
+            WHERE r.requester_id = ?
+            ORDER BY r.created_at DESC
+        `;
+        const [results] = await db.query(query, [currentUserId]);
+        res.json({ success: true, requests: results });
+    } catch (err) {
+        next(err);
+    }
+});
+
+// ======================
 // Add a new request (any logged-in user)
 // ======================
 router.post('/add', auth(), validate(requestSchema), async (req, res, next) => {

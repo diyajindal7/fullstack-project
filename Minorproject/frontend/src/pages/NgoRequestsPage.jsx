@@ -2,8 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useAuth } from '../hooks/useAuth';
-import { getAllRequests } from '../api/requestsService';
-import { getAllItems } from '../api/itemsService';
+import { getMyRequests } from '../api/requestsService';
 import { deleteRequest } from '../api/requestsService';
 import Button from '../components/common/Button';
 
@@ -11,7 +10,6 @@ const NgoRequestsPage = () => {
   const { user } = useAuth();
   const navigate = useNavigate();
   const [myRequests, setMyRequests] = useState([]);
-  const [items, setItems] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
 
@@ -25,18 +23,8 @@ const NgoRequestsPage = () => {
     try {
       setLoading(true);
       setError('');
-      const [requestsData, itemsData] = await Promise.all([
-        getAllRequests(),
-        getAllItems()
-      ]);
-
-      setItems(itemsData || []);
-      
-      // Filter requests made by current NGO
-      const myRequests = (requestsData || []).filter(req => 
-        req.requester_id === user.id
-      );
-      setMyRequests(myRequests);
+      const requestsData = await getMyRequests();
+      setMyRequests(requestsData || []);
     } catch (error) {
       console.error('Error loading data:', error);
       setError('Failed to load requests: ' + (error.message || 'Unknown error'));
@@ -62,10 +50,6 @@ const NgoRequestsPage = () => {
 
   const handleViewItem = (itemId) => {
     navigate(`/item/${itemId}`);
-  };
-
-  const getItemDetails = (itemId) => {
-    return items.find(item => item.id === itemId);
   };
 
   if (loading) {
@@ -135,23 +119,22 @@ const NgoRequestsPage = () => {
       ) : (
         <ul style={listStyle}>
           {myRequests.map(request => {
-            const item = getItemDetails(request.item_id);
             return (
               <li key={request.id} style={itemStyle}>
                 <div style={{ flex: 1 }}>
                   <strong style={{ fontSize: '1.1rem' }}>
-                    {item ? item.title : (request.item_title || 'Unknown Item')}
+                    {request.item_title || 'Unknown Item'}
                   </strong>
-                  {item && item.description && (
+                  {request.item_description && (
                     <p style={{ margin: '0.5rem 0', color: '#666', fontSize: '0.9rem' }}>
-                      {item.description.length > 100 
-                        ? item.description.substring(0, 100) + '...' 
-                        : item.description}
+                      {request.item_description.length > 100 
+                        ? request.item_description.substring(0, 100) + '...' 
+                        : request.item_description}
                     </p>
                   )}
-                  {item && item.location && (
+                  {request.item_location && (
                     <p style={{ margin: '0.25rem 0', color: '#999', fontSize: '0.85rem' }}>
-                      📍 {item.location}
+                      📍 {request.item_location}
                     </p>
                   )}
                   <small style={{ color: '#666' }}>
@@ -167,18 +150,16 @@ const NgoRequestsPage = () => {
                   </small>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', marginLeft: '1rem', flexWrap: 'wrap' }}>
-                  {item && (
-                    <button
-                      style={viewButtonStyle}
-                      onClick={() => handleViewItem(request.item_id)}
-                      title="View item details"
-                    >
-                      View Item
-                    </button>
-                  )}
+                  <button
+                    style={viewButtonStyle}
+                    onClick={() => handleViewItem(request.item_id)}
+                    title="View item details"
+                  >
+                    View Item
+                  </button>
                   <button
                     style={deleteButtonStyle}
-                    onClick={() => handleDeleteRequest(request.id, item ? item.title : 'Item')}
+                    onClick={() => handleDeleteRequest(request.id, request.item_title || 'Item')}
                     title="Cancel this request"
                   >
                     Cancel Request
