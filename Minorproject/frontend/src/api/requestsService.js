@@ -214,3 +214,39 @@ export const completeRequest = async (requestId) => {
     throw error;
   }
 };
+
+/**
+ * ✅ Delete/Cancel a request (requester only)
+ */
+export const deleteRequest = async (requestId) => {
+  try {
+    const token = localStorage.getItem('token');
+    if (!token) {
+      throw new Error('You must be logged in to cancel requests');
+    }
+
+    const response = await fetch(`${API_BASE_URL}/api/requests/${requestId}`, {
+      method: 'DELETE',
+      headers: {
+        Authorization: `Bearer ${token}`,
+      },
+    });
+
+    if (!response) {
+      throw new Error('Network error: Could not connect to server');
+    }
+
+    const data = await response.json().catch(() => {
+      throw new Error(`Server error: Invalid response (${response.status})`);
+    });
+
+    if (!response.ok) {
+      throw new Error(data.message || `Failed to cancel request: ${response.status}`);
+    }
+    
+    return data;
+  } catch (error) {
+    console.error('Error deleting request:', error);
+    throw error;
+  }
+};

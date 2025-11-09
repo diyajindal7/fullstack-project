@@ -56,7 +56,7 @@ router.get('/', async (req, res) => {
 });
 
 // ==========================
-// GET users by role (admin-only)
+// GET users by role (admin-only) - MUST come before /:id route
 // ==========================
 const auth = require('../middleware/auth');
 router.get('/role/:role', auth('admin'), async (req, res) => {
@@ -71,17 +71,74 @@ router.get('/role/:role', auth('admin'), async (req, res) => {
 });
 
 // ==========================
+// GET user by ID (for chat - get other user info)
+// ==========================
+router.get('/:id', async (req, res) => {
+  try {
+    const { id } = req.params;
+    // Check if it's a number to avoid conflicts with 'role' route
+    if (isNaN(id)) {
+      return res.status(400).json({ message: 'Invalid user ID' });
+    }
+    const [rows] = await db.query('SELECT id, name, email, user_type FROM users WHERE id = ?', [id]);
+    if (rows.length === 0) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+    res.json(rows[0]);
+  } catch (error) {
+    console.error('❌ Error fetching user:', error);
+    res.status(500).json({ message: 'Internal Server Error' });
+  }
+});
+
+// ==========================
 // UPDATE a user
 // ==========================
-router.put('/:id', async (req, res) => {
+router.put('/:id', auth(), async (req, res) => {
   const { id } = req.params;
-  const { name, email, password, user_type } = req.body;
+  const { name, email, password, user_type, location } = req.body;
+  const currentUserId = req.user.id;
+  const isAdmin = req.user.role === 'admin';
+
+  // Users can only update their own profile (unless admin)
+  if (parseInt(id) !== currentUserId && !isAdmin) {
+    return res.status(403).json({ message: 'Not authorized to update this user' });
+  }
 
   try {
-    const [result] = await db.query(
-      'UPDATE users SET name = ?, email = ?, password = ?, user_type = ? WHERE id = ?',
-      [name, email, password, user_type, id]
-    );
+    // Build dynamic update query based on provided fields
+    const updates = [];
+    const values = [];
+
+    if (name !== undefined) {
+      updates.push('name = ?');
+      values.push(name);
+    }
+    if (email !== undefined) {
+      updates.push('email = ?');
+      values.push(email);
+    }
+    if (password !== undefined) {
+      updates.push('password = ?');
+      values.push(password);
+    }
+    if (user_type !== undefined && isAdmin) {
+      updates.push('user_type = ?');
+      values.push(user_type);
+    }
+    if (location !== undefined) {
+      updates.push('location = ?');
+      values.push(location);
+    }
+
+    if (updates.length === 0) {
+      return res.status(400).json({ message: 'No fields to update' });
+    }
+
+    values.push(id);
+
+    const query = `UPDATE users SET ${updates.join(', ')} WHERE id = ?`;
+    const [result] = await db.query(query, values);
 
     if (result.affectedRows === 0) {
       return res.status(404).json({ message: 'User not found' });

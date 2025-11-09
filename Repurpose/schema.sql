@@ -9,6 +9,7 @@ CREATE TABLE IF NOT EXISTS users (
     email VARCHAR(100) UNIQUE NOT NULL,
     password VARCHAR(255) NOT NULL,
     phone VARCHAR(10),
+    location VARCHAR(255),
     user_type ENUM('individual', 'ngo', 'admin') DEFAULT 'individual',
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
@@ -45,6 +46,21 @@ CREATE TABLE IF NOT EXISTS requests (
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
     FOREIGN KEY (requester_id) REFERENCES users(id) ON DELETE CASCADE
+);
+
+-- Messages table for chat functionality
+CREATE TABLE IF NOT EXISTS messages (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+    sender_id INT NOT NULL,
+    receiver_id INT NOT NULL,
+    message TEXT NOT NULL,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    FOREIGN KEY (sender_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_item_users (item_id, sender_id, receiver_id),
+    INDEX idx_conversation (item_id, sender_id, receiver_id, created_at)
 );
 
 -- Optional: Seed some categories for testing

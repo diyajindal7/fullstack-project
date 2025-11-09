@@ -163,4 +163,42 @@ router.put('/:id/complete', auth('admin'), async (req, res, next) => {
     }
 });
 
+// ======================
+// DELETE a request (requester or admin)
+// ======================
+router.delete('/:id', auth(), async (req, res, next) => {
+    try {
+        const requestId = req.params.id;
+        const currentUserId = req.user.id;
+        const isAdmin = req.user.role === 'admin';
+
+        // Get the request to check ownership
+        const [requestCheck] = await db.query('SELECT requester_id FROM requests WHERE id = ?', [requestId]);
+        
+        if (requestCheck.length === 0) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        const requesterId = requestCheck[0].requester_id;
+        
+        // Only requester or admin can delete
+        if (currentUserId !== requesterId && !isAdmin) {
+            return res.status(403).json({ 
+                success: false, 
+                message: 'Not authorized to delete this request' 
+            });
+        }
+
+        const [results] = await db.query('DELETE FROM requests WHERE id = ?', [requestId]);
+
+        if (results.affectedRows === 0) {
+            return res.status(404).json({ success: false, message: 'Request not found' });
+        }
+
+        res.json({ success: true, message: 'Request deleted successfully' });
+    } catch (err) {
+        next(err);
+    }
+});
+
 module.exports = router;

@@ -26,12 +26,14 @@ const categoriesRoute = require('./routes/categories');
 const itemsRoute = require('./routes/items');
 const requestsRoute = require('./routes/requests');
 const adminRoute = require('./routes/admin');
+const messagesRoute = require('./routes/messages');
 // Use them with /api prefix
 app.use('/api/users', usersRoute);
 app.use('/api/categories', categoriesRoute);
 app.use('/api/items', itemsRoute);
 app.use('/api/requests', requestsRoute);
 app.use('/api/admins', adminRoute);
+app.use('/api/messages', messagesRoute);
 
 // ======================
 // Error Handler (must be last)

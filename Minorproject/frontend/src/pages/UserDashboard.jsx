@@ -47,6 +47,20 @@ const UserDashboard = () => {
       <h1>Welcome to your Dashboard, {user ? user.name : 'User'}!</h1>
       <p>Here you can track the status of all the items you have donated.</p>
       
+      <div style={{ marginBottom: '2rem' }}>
+        <Link to="/my-requests" style={{ 
+          display: 'inline-block',
+          padding: '0.75rem 1.5rem',
+          backgroundColor: 'var(--primary-color)',
+          color: 'white',
+          textDecoration: 'none',
+          borderRadius: '4px',
+          marginRight: '1rem'
+        }}>
+          View Requests for My Items
+        </Link>
+      </div>
+      
       <div style={itemGridStyle}>
         {myItems.length === 0 ? (
           <p>You have not donated any items yet. <Link to="/donate-item">Donate one now!</Link></p>

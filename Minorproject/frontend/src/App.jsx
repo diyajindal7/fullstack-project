@@ -21,6 +21,9 @@ import AdminUsersPage from './pages/AdminUsersPage';
 import AdminNgosPage from './pages/AdminNgosPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
+import MyRequestsPage from './pages/MyRequestsPage';
+import ConversationsListPage from './pages/ConversationsListPage';
+import NgoRequestsPage from './pages/NgoRequestsPage';
 
 
 
@@ -62,11 +65,21 @@ function App() {
                 <EditItemPage />
               </ProtectedRoute>
             }/>
+            <Route path="/my-requests" element={
+              <ProtectedRoute allowedRoles={['individual']}>
+                <MyRequestsPage />
+              </ProtectedRoute>
+            }/>
 
             {/* --- NGO Routes --- */}
             <Route path="/ngo-dashboard" element={
               <ProtectedRoute allowedRoles={['ngo']}>
                 <NgoDashboard />
+              </ProtectedRoute>
+            }/>
+            <Route path="/ngo-requests" element={
+              <ProtectedRoute allowedRoles={['ngo']}>
+                <NgoRequestsPage />
               </ProtectedRoute>
             }/>
 
@@ -99,6 +112,11 @@ function App() {
             
             {/* --- Shared Routes --- */}
             <Route path="/chat" element={
+              <ProtectedRoute allowedRoles={['individual', 'ngo', 'admin']}>
+                <ConversationsListPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/chat/:itemId/:otherUserId" element={
               <ProtectedRoute allowedRoles={['individual', 'ngo', 'admin']}>
                 <ChatPage />
               </ProtectedRoute>

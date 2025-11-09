@@ -21,7 +21,7 @@ const ChatBox = ({ messages, onSend, currentUserRole }) => {
             sender={msg.sender} 
             text={msg.text} 
             time={msg.time}
-            // 2. Pass the role down to the bubble
+            isOwn={msg.isOwn}
             currentUserRole={currentUserRole}
           />
         ))}

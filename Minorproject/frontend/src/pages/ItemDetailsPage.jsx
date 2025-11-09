@@ -1,6 +1,6 @@
 // src/pages/ItemDetailsPage.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { getItemById } from '../api/itemsService';
 import { createRequest } from '../api/requestsService';
 import { useAuth } from '../hooks/useAuth';
@@ -8,6 +8,7 @@ import Button from '../components/common/Button';
 
 const ItemDetailsPage = () => {
   const { itemId } = useParams();
+  const navigate = useNavigate();
   const { user } = useAuth();
   const [item, setItem] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -16,10 +17,14 @@ const ItemDetailsPage = () => {
   useEffect(() => {
     getItemById(itemId)
       .then(data => {
+        console.log('Item data:', data); // Debug log
         setItem(data);
         setLoading(false);
       })
-      .catch(error => console.error("Failed to fetch item:", error));
+      .catch(error => {
+        console.error("Failed to fetch item:", error);
+        setLoading(false);
+      });
   }, [itemId]);
 
   const handleRequest = async () => {
@@ -81,22 +86,51 @@ const ItemDetailsPage = () => {
   };
 
   const buttonState = getButtonState();
+
+  const handleChat = () => {
+    if (!item) {
+      alert('Item information is missing');
+      return;
+    }
+    
+    // Get user_id from item (backend returns it)
+    const ownerId = item.user_id;
+    if (!ownerId) {
+      alert('Could not find item owner information');
+      return;
+    }
+    
+    // Navigate to chat with item owner
+    navigate(`/chat/${item.id}/${ownerId}`);
+  };
   
   return (
     <div style={pageStyle}>
       <h1>{item.title}</h1>
       <p><strong>Category:</strong> {item.category}</p>
       <p>{item.description}</p>
-      <div style={{ width: '200px', marginTop: '1rem' }}>
+      <div style={{ display: 'flex', gap: '1rem', marginTop: '1rem' }}>
+        <div style={{ width: '200px' }}>
+          <Button 
+            onClick={handleRequest}
+            disabled={buttonState.disabled}
+            variant={buttonState.variant}
+          >
+            {buttonState.text}
+          </Button>
+        </div>
         
-        <Button 
-          onClick={handleRequest}
-          disabled={buttonState.disabled}
-          variant={buttonState.variant}
-        >
-          {buttonState.text}
-        </Button>
-
+        {/* Show Chat button for NGOs */}
+        {user && user.user_type === 'ngo' && item && item.user_id && (
+          <div style={{ width: '150px' }}>
+            <Button 
+              variant="secondary"
+              onClick={handleChat}
+            >
+              Chat with Donator
+            </Button>
+          </div>
+        )}
       </div>
     </div>
   );

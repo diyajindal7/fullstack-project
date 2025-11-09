@@ -16,11 +16,11 @@ const CreateItemPage = () => {
     }
 
     // Transform form data to match backend expectations
-    // Note: image_url column doesn't exist in database, so we skip it for now
     const itemData = {
       title: formData.title,
       description: formData.description || '',
-      category_id: parseInt(formData.category)
+      category_id: parseInt(formData.category),
+      location: formData.location || ''
     };
 
     createItem(itemData)

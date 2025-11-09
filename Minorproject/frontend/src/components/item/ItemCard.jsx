@@ -67,6 +67,12 @@ const ItemCard = ({ item, isDashboard = false, onDelete }) => {
           <h3 className={styles.title}>{item.title}</h3>
           <p className={styles.description}>{item.description}</p>
           
+          {item.location && (
+            <p className={styles.location} style={{ color: '#666', fontSize: '0.9rem', marginTop: '0.5rem' }}>
+              📍 {item.location}
+            </p>
+          )}
+          
           <div className={styles.tagsContainer}>
             <span className={styles.categoryTag}>{item.category}</span>
             {item.status && (

@@ -75,7 +75,7 @@ router.get('/:id', async (req, res, next) => {
 // ======================
 router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
   try {
-    const { title, description, category_id } = req.validated;
+    const { title, description, category_id, location } = req.validated;
 
     if (!title || !category_id) {
       return res.status(400).json({
@@ -84,11 +84,11 @@ router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
       });
     }
 
-    // Insert without image_url and location columns
+    // Insert with location column
     const query = `
       INSERT INTO items 
-      (title, description, category_id, user_id) 
-      VALUES (?, ?, ?, ?)
+      (title, description, category_id, user_id, location) 
+      VALUES (?, ?, ?, ?, ?)
     `;
 
     const [results] = await db.query(query, [
@@ -96,6 +96,7 @@ router.post('/add', auth(), validate(itemSchema), async (req, res, next) => {
       description || '',
       category_id,
       req.user.id,
+      location || null,
     ]);
 
     res.status(201).json({
@@ -148,16 +149,26 @@ router.put('/:id', auth(), async (req, res, next) => {
 });
 
 // ======================
-// DELETE an item (owner only)
+// DELETE an item (owner or admin)
 // ======================
 router.delete('/:id', auth(), async (req, res, next) => {
   try {
     const itemId = req.params.id;
+    const isAdmin = req.user.role === 'admin';
+    const isOwner = req.user.id;
 
-    const [results] = await db.query('DELETE FROM items WHERE id = ? AND user_id = ?', [
-      itemId,
-      req.user.id,
-    ]);
+    let query, params;
+    if (isAdmin) {
+      // Admin can delete any item
+      query = 'DELETE FROM items WHERE id = ?';
+      params = [itemId];
+    } else {
+      // Owner can only delete their own items
+      query = 'DELETE FROM items WHERE id = ? AND user_id = ?';
+      params = [itemId, isOwner];
+    }
+
+    const [results] = await db.query(query, params);
 
     if (results.affectedRows === 0)
       return res.status(403).json({ success: false, message: 'Not authorized or item not found' });

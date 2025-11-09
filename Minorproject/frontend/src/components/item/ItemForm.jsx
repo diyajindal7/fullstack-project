@@ -8,6 +8,7 @@ const ItemForm = ({ onSubmit, initialData = null, buttonText = "Submit" }) => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [category, setCategory] = useState('');
+  const [location, setLocation] = useState('');
   const [image, setImage] = useState(null);
   const [categories, setCategories] = useState([]);
 
@@ -30,6 +31,7 @@ const ItemForm = ({ onSubmit, initialData = null, buttonText = "Submit" }) => {
       setTitle(initialData.title);
       setDescription(initialData.description);
       setCategory(initialData.category); // This is the ID
+      setLocation(initialData.location || '');
     }
   }, [initialData]);
 
@@ -47,6 +49,7 @@ const ItemForm = ({ onSubmit, initialData = null, buttonText = "Submit" }) => {
       title,
       description,
       category,
+      location,
       // In a real app, you'd upload the file. We'll simulate a URL.
       imageUrl: (initialData && initialData.imageUrl && !image) 
         ? initialData.imageUrl 
@@ -132,6 +135,15 @@ const ItemForm = ({ onSubmit, initialData = null, buttonText = "Submit" }) => {
           )}
         </select>
       </div>
+
+      {/* --- Location Input --- */}
+      <Input
+        label="Location (City, State)"
+        type="text"
+        placeholder="e.g., New York, NY or Mumbai, Maharashtra"
+        value={location}
+        onChange={(e) => setLocation(e.target.value)}
+      />
 
       {/* --- Image Upload Input --- */}
       <div>
