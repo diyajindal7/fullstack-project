@@ -11,6 +11,9 @@ CREATE TABLE IF NOT EXISTS users (
     phone VARCHAR(10),
     location VARCHAR(255),
     user_type ENUM('individual', 'ngo', 'admin') DEFAULT 'individual',
+    documents TEXT,
+    verification_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    remarks TEXT,
     created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -61,6 +64,70 @@ CREATE TABLE IF NOT EXISTS messages (
     FOREIGN KEY (receiver_id) REFERENCES users(id) ON DELETE CASCADE,
     INDEX idx_item_users (item_id, sender_id, receiver_id),
     INDEX idx_conversation (item_id, sender_id, receiver_id, created_at)
+);
+
+-- NGO Campaigns table
+CREATE TABLE IF NOT EXISTS ngo_campaigns (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    ngo_id INT NOT NULL,
+    title VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    category VARCHAR(100),
+    image_url VARCHAR(500),
+    start_date DATE,
+    end_date DATE,
+    contact_link VARCHAR(500),
+    approval_status ENUM('Pending', 'Approved', 'Rejected') DEFAULT 'Pending',
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (ngo_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_ngo (ngo_id),
+    INDEX idx_status (approval_status),
+    INDEX idx_dates (start_date, end_date)
+);
+
+-- User Reports table for NGO reporting system
+CREATE TABLE IF NOT EXISTS user_reports (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    reported_user_id INT NOT NULL,
+    reporter_id INT NOT NULL,
+    reason VARCHAR(255) NOT NULL,
+    description TEXT NOT NULL,
+    status ENUM('pending', 'reviewed', 'resolved', 'dismissed') DEFAULT 'pending',
+    admin_remarks TEXT,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (reported_user_id) REFERENCES users(id) ON DELETE CASCADE,
+    FOREIGN KEY (reporter_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_reported_user (reported_user_id),
+    INDEX idx_reporter (reporter_id),
+    INDEX idx_status (status)
+);
+
+-- Gamification: Donor Points table
+CREATE TABLE IF NOT EXISTS donor_points (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    user_id INT NOT NULL UNIQUE,
+    points INT DEFAULT 0,
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+    FOREIGN KEY (user_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_points (points DESC)
+);
+
+-- Impact Updates table
+CREATE TABLE IF NOT EXISTS impact_updates (
+    id INT AUTO_INCREMENT PRIMARY KEY,
+    item_id INT NOT NULL,
+    ngo_id INT NOT NULL,
+    message TEXT NOT NULL,
+    image_url VARCHAR(500),
+    created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    FOREIGN KEY (item_id) REFERENCES items(id) ON DELETE CASCADE,
+    FOREIGN KEY (ngo_id) REFERENCES users(id) ON DELETE CASCADE,
+    INDEX idx_ngo (ngo_id),
+    INDEX idx_item (item_id),
+    INDEX idx_created (created_at DESC)
 );
 
 -- Optional: Seed some categories for testing

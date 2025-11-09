@@ -55,10 +55,10 @@ export const AuthProvider = ({ children }) => {
   };
 
   // signup function now calls the apiService
-  const signup = async (name, email, password, userType) => {
+  const signup = async (name, email, password, userType, documents = null) => {
     try {
       // Pass all arguments to the API function
-      const responseData = await apiSignUp(name, email, password, userType);
+      const responseData = await apiSignUp(name, email, password, userType, documents);
       
       // Note: Signup doesn't return token, user needs to login after signup
       // But we can still update state if needed

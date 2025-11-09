@@ -10,6 +10,7 @@ const SignUpPage = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [userType, setUserType] = useState('individual');
+  const [documents, setDocuments] = useState('');
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   
@@ -32,9 +33,16 @@ const SignUpPage = () => {
     
     try {
       // Sign up the user
-      await signup(name, email, password, userType);
+      const response = await signup(name, email, password, userType, userType === 'ngo' ? documents : null);
       
-      // After successful signup, automatically log them in
+      // If NGO signup, show verification message and don't auto-login
+      if (userType === 'ngo' && response.requiresVerification) {
+        alert('Your registration request has been submitted. Please wait for admin verification. You\'ll be notified via your registered email once approved.');
+        navigate('/login');
+        return;
+      }
+      
+      // For non-NGOs, automatically log them in
       await login(email, password, userType);
       // The useEffect will handle the redirect
     } catch (err) {
@@ -112,6 +120,29 @@ const SignUpPage = () => {
             <option value="admin">Admin</option>
           </select>
         </div>
+        {userType === 'ngo' && (
+          <div>
+            <label style={labelStyle}>Verification Documents (URLs or file paths)</label>
+            <textarea
+              value={documents}
+              onChange={(e) => setDocuments(e.target.value)}
+              placeholder="Enter document URLs or file paths (one per line or comma-separated)"
+              style={{
+                width: '100%',
+                padding: '10px',
+                marginBottom: '20px',
+                borderRadius: '4px',
+                border: '1px solid #ccc',
+                boxSizing: 'border-box',
+                minHeight: '80px',
+                fontFamily: 'inherit'
+              }}
+            />
+            <small style={{ color: '#666', display: 'block', marginTop: '-15px', marginBottom: '15px' }}>
+              Please provide links to your NGO registration documents, certificates, or other verification documents.
+            </small>
+          </div>
+        )}
         <Button type="submit" variant="secondary" disabled={loading}>
           {loading ? 'Creating account...' : 'Sign Up'}
         </Button>

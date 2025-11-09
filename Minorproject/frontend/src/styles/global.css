@@ -1,63 +1,68 @@
-/* src/styles/global.css */
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
 
-/* 1. Import a clean, modern font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+/* ============================================
+   EARTHY GREEN COMMUNITY SUSTAINABILITY THEME
+   ============================================ */
 
-/* 2. Define your new vibrant color theme */
-:root {
-  /* Primary (Brand, Links, Main Buttons) */
-  --primary-color: #4C51BF; /* New Indigo */
-  --primary-hover: #434190; /* Darker Indigo */
-
-  /* Secondary (Call-to-Action, Donate, Sign Up) */
-  --secondary-color: #84CC16; /* New Lime Green */
-  --secondary-hover: #65A30D; /* Darker Lime Green */
-
-  /* Neutrals */
-  --light-bg: #f8f9fa;      /* This is your light gray background */
-  --dark-text: #212529;
-  --light-text: #6c757d;
-  --border-color: #dee2e6;
-  --shadow-color: rgba(0, 0, 0, 0.08);
-
-  /* Functional Colors (for alerts, tags, etc.) */
-  --success-color: #28a745;
-  --danger-color: #dc3545;
-  --admin-color: #6a1b9a; /* A deep purple for admin */
+/* Global Background - Soft Green Gradient */
+@layer base {
+  body {
+    @apply bg-gradient-to-br from-emerald-100 via-lime-50 to-emerald-200 min-h-screen;
+  }
 }
 
-/* 3. A basic CSS reset */
-* {
-  box-sizing: border-box;
-  margin: 0;
-  padding: 0;
+/* Custom Card Style - Consistent Glassmorphism */
+@layer components {
+  .card-sustainable {
+    @apply bg-white/70 backdrop-blur-xl border border-emerald-200 shadow-md rounded-2xl p-6;
+    @apply transition-all duration-300 hover:scale-[1.02] hover:shadow-lg;
+  }
+  
+  .btn-sustainable {
+    @apply px-5 py-2.5 bg-emerald-600 text-white rounded-full shadow-md;
+    @apply hover:bg-emerald-700 hover:shadow-lg transition-all duration-300;
+    @apply font-medium tracking-wide;
+  }
+  
+  .btn-sustainable-secondary {
+    @apply px-5 py-2.5 bg-emerald-100 text-emerald-800 rounded-full shadow-sm;
+    @apply hover:bg-emerald-200 hover:shadow-md transition-all duration-300;
+    @apply font-medium tracking-wide border border-emerald-300;
+  }
+  
+  .heading-sustainable {
+    @apply text-emerald-900 font-semibold tracking-wide;
+  }
+  
+  .subheading-sustainable {
+    @apply text-emerald-700 font-medium;
+  }
+  
+  .text-sustainable {
+    @apply text-stone-700 leading-relaxed;
+  }
 }
 
-/* 4. Set global styles */
-body {
-  font-family: 'Inter', sans-serif;
-  background-color: var(--light-bg); /* Using the light gray background */
-  color: var(--dark-text);
-  line-height: 1.6;
+/* Smooth scrolling */
+html {
+  scroll-behavior: smooth;
 }
 
-main {
-  /* Adds consistent spacing to your main content area */
-  max-width: 1200px;
-  margin: 0 auto;
-  padding: 0 1rem;
+/* Custom scrollbar - Green theme */
+::-webkit-scrollbar {
+  width: 10px;
 }
 
-h1, h2, h3 {
-  margin-bottom: 1rem;
-  line-height: 1.2;
+::-webkit-scrollbar-track {
+  @apply bg-emerald-50;
 }
 
-a {
-  color: var(--primary-color);
-  text-decoration: none;
+::-webkit-scrollbar-thumb {
+  @apply bg-emerald-400 rounded-full;
 }
 
-a:hover {
-  text-decoration: underline;
+::-webkit-scrollbar-thumb:hover {
+  @apply bg-emerald-500;
 }

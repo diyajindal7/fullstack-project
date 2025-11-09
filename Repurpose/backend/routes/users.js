@@ -8,7 +8,7 @@ const db = require('../config/db');
 // ==========================
 router.post('/', async (req, res) => {
   console.log('📩 Received POST /api/users');
-  const { name, email, password, user_type } = req.body;
+  const { name, email, password, user_type, documents } = req.body;
 
   if (!name || !email || !password) {
     return res.status(400).json({ message: 'Name, email, and password are required.' });
@@ -21,14 +21,32 @@ router.post('/', async (req, res) => {
       return res.status(409).json({ message: 'Email already registered. Please use a different email or login.' });
     }
 
-    const [result] = await db.query(
-      'INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)',
-      [name, email, password, user_type || 'individual']
-    );
+    const finalUserType = user_type || 'individual';
+    const isNgo = finalUserType === 'ngo';
+    
+    // For NGOs, set verification_status to 'Pending' and store documents
+    const verificationStatus = isNgo ? 'Pending' : null;
+    const documentsValue = isNgo ? (documents || null) : null;
+
+    // Build query dynamically based on whether it's an NGO
+    let query, params;
+    if (isNgo) {
+      query = 'INSERT INTO users (name, email, password, user_type, documents, verification_status) VALUES (?, ?, ?, ?, ?, ?)';
+      params = [name, email, password, finalUserType, documentsValue, verificationStatus];
+    } else {
+      query = 'INSERT INTO users (name, email, password, user_type) VALUES (?, ?, ?, ?)';
+      params = [name, email, password, finalUserType];
+    }
+
+    const [result] = await db.query(query, params);
+    
     res.status(201).json({ 
       success: true,
-      message: 'User created successfully', 
-      id: result.insertId 
+      message: isNgo 
+        ? 'Your registration request has been submitted. Please wait for admin verification. You\'ll be notified via your registered email once approved.'
+        : 'User created successfully', 
+      id: result.insertId,
+      requiresVerification: isNgo
     });
   } catch (error) {
     console.error('❌ Error creating user:', error);
@@ -56,14 +74,40 @@ router.get('/', async (req, res) => {
 });
 
 // ==========================
-// GET users by role (admin-only) - MUST come before /:id route
+// GET individual users for NGO reporting (NGO-only) - MUST come before /:id route
 // ==========================
 const auth = require('../middleware/auth');
+router.get('/for-reporting', auth(), async (req, res) => {
+  try {
+    const userType = req.user.role || req.user.user_type;
+    
+    // Only NGOs can access this endpoint
+    if (userType !== 'ngo') {
+      return res.status(403).json({ 
+        success: false,
+        message: 'Only NGOs can access this endpoint' 
+      });
+    }
+
+    const [rows] = await db.query(
+      'SELECT id, name, email FROM users WHERE user_type = ?', 
+      ['individual']
+    );
+    res.json({ success: true, users: rows });
+  } catch (error) {
+    console.error('❌ Error fetching users for reporting:', error);
+    res.status(500).json({ success: false, message: 'Internal Server Error' });
+  }
+});
+
+// ==========================
+// GET users by role (admin-only) - MUST come before /:id route
+// ==========================
 router.get('/role/:role', auth('admin'), async (req, res) => {
   const { role } = req.params;
   try {
     const [rows] = await db.query('SELECT id, name, email, user_type FROM users WHERE user_type = ?', [role]);
-    res.json(rows);
+    res.json({ users: rows });
   } catch (error) {
     console.error('❌ Error fetching users by role:', error);
     res.status(500).json({ message: 'Internal Server Error' });
@@ -226,6 +270,16 @@ router.post('/login', async (req, res) => {
       return res.status(403).json({ 
         message: `This account is registered as ${user.user_type}, not ${userType}. Please select the correct user type.` 
       });
+    }
+
+    // Block NGO login if not approved
+    if (user.user_type === 'ngo') {
+      const verificationStatus = user.verification_status || 'Pending';
+      if (verificationStatus !== 'Approved') {
+        return res.status(403).json({
+          message: `Your NGO account is ${verificationStatus}. Please wait for admin approval. You'll be notified via email once approved.`
+        });
+      }
     }
 
     // ✅ Generate JWT Token

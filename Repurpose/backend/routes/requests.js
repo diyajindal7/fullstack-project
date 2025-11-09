@@ -180,6 +180,24 @@ router.put('/:id/complete', auth('admin'), async (req, res, next) => {
         const updateQuery = 'UPDATE requests SET status = ? WHERE id = ?';
         await db.query(updateQuery, [status, requestId]);
         
+        // Award points to the donor (item owner)
+        try {
+            const [itemCheck] = await db.query('SELECT user_id FROM items WHERE id = ?', [checkResults[0].item_id]);
+            if (itemCheck.length > 0) {
+                const donorId = itemCheck[0].user_id;
+                const [pointsCheck] = await db.query('SELECT points FROM donor_points WHERE user_id = ?', [donorId]);
+                
+                if (pointsCheck.length > 0) {
+                    await db.query('UPDATE donor_points SET points = points + 10 WHERE user_id = ?', [donorId]);
+                } else {
+                    await db.query('INSERT INTO donor_points (user_id, points) VALUES (?, 10)', [donorId]);
+                }
+            }
+        } catch (pointsErr) {
+            console.error('Error awarding points:', pointsErr);
+            // Don't fail the request if points fail
+        }
+        
         res.json({ success: true, message: `Request marked as completed successfully` });
     } catch (err) {
         next(err);

@@ -47,12 +47,6 @@ const AdminDashboard = () => {
       
       {/* 4. Use Buttons with onClick to navigate */}
       <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/requests')}>
-          View & Manage Donation Requests
-        </Button>
-      </div>
-      
-      <div style={buttonWrapperStyle}>
         <Button variant="primary" onClick={() => navigate('/admin/categories')}>
           Manage Categories
         </Button>
@@ -71,7 +65,19 @@ const AdminDashboard = () => {
       </div>
 
       <div style={buttonWrapperStyle}>
-        <Button variant="secondary" onClick={fetchAdminStats}>
+        <Button variant="primary" onClick={() => navigate('/admin/ngo-verification')}>
+          Verify NGOs
+        </Button>
+      </div>
+
+      <div style={buttonWrapperStyle}>
+        <Button variant="primary" onClick={() => navigate('/admin/user-reports')}>
+          User Reports
+        </Button>
+      </div>
+
+      <div style={buttonWrapperStyle}>
+        <Button variant="secondary" onClick={() => navigate('/admin/stats')}>
           View Platform Stats
         </Button>
       </div>

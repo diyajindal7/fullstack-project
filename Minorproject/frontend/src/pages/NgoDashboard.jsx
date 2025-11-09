@@ -128,13 +128,36 @@ const NgoDashboard = () => {
             : 'No location set. Set your location above to see nearby items first.'}
         </p>
         
-        <div style={{ marginTop: '1.5rem' }}>
+        <div style={{ marginTop: '1.5rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
           <Button 
             variant="primary" 
             onClick={() => navigate('/ngo-requests')}
-            style={{ marginRight: '1rem' }}
           >
             Manage Donors - My Requests
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/ngo/create-campaign')}
+          >
+            Launch Event / Create Campaign
+          </Button>
+          <Button
+            variant="primary"
+            onClick={() => navigate('/ngo/create-impact-update')}
+          >
+            Share Impact Update
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/ngo/report-user')}
+          >
+            Report User
+          </Button>
+          <Button
+            variant="secondary"
+            onClick={() => navigate('/impact-feed')}
+          >
+            View Impact Feed
           </Button>
         </div>
       </div>

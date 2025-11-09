@@ -27,6 +27,11 @@ const itemsRoute = require('./routes/items');
 const requestsRoute = require('./routes/requests');
 const adminRoute = require('./routes/admin');
 const messagesRoute = require('./routes/messages');
+const reportsRoute = require('./routes/reports');
+const ngoVerificationRoute = require('./routes/ngoVerification');
+const campaignsRoute = require('./routes/campaigns');
+const pointsRoute = require('./routes/points');
+const impactRoute = require('./routes/impact');
 // Use them with /api prefix
 app.use('/api/users', usersRoute);
 app.use('/api/categories', categoriesRoute);
@@ -34,6 +39,11 @@ app.use('/api/items', itemsRoute);
 app.use('/api/requests', requestsRoute);
 app.use('/api/admins', adminRoute);
 app.use('/api/messages', messagesRoute);
+app.use('/api/reports', reportsRoute);
+app.use('/api/ngo-verification', ngoVerificationRoute);
+app.use('/api/campaigns', campaignsRoute);
+app.use('/api/points', pointsRoute);
+app.use('/api/impact', impactRoute);
 
 // ======================
 // Error Handler (must be last)

@@ -23,8 +23,8 @@ const AdminNgosPage = () => {
     .then(([ngoData, requestData]) => {
       console.log('NGOs data:', ngoData);
       console.log('Requests data:', requestData);
-      setNgos(ngoData || []);
-      setRequests(requestData || []);
+      setNgos(ngoData.users || ngoData || []);
+      setRequests(requestData.requests || requestData || []);
       setLoading(false);
     })
     .catch(err => {

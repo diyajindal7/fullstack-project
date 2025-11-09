@@ -35,19 +35,26 @@ export const apiLogin = async (email, password, userType) => {
 };
 
 // ---- SIGNUP ----
-export const apiSignUp = async (name, email, password, userType) => {
+export const apiSignUp = async (name, email, password, userType, documents = null) => {
   try {
     // Map userType to role for backend validator, backend will map role to user_type
     // Backend expects POST /api/users to create a user
+    const body = { 
+      name, 
+      email, 
+      password, 
+      user_type: userType || 'individual'
+    };
+    
+    // Add documents if NGO
+    if (userType === 'ngo' && documents) {
+      body.documents = documents;
+    }
+    
     const response = await fetch(`${API_BASE_URL}/api/users`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ 
-        name, 
-        email, 
-        password, 
-        user_type: userType || 'individual'
-      }),
+      body: JSON.stringify(body),
     });
 
     if (!response.ok) {

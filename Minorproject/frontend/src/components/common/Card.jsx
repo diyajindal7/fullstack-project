@@ -1,10 +1,8 @@
-// src/components/common/Card.jsx
 import React from 'react';
-import styles from './Card.module.css';
 
-const Card = ({ children }) => {
+const Card = ({ children, className = '' }) => {
   return (
-    <div className={styles.card}>
+    <div className={`card-sustainable ${className}`}>
       {children}
     </div>
   );

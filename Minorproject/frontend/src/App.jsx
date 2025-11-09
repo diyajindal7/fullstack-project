@@ -19,11 +19,21 @@ import AdminCategoriesPage from './pages/AdminCategoriesPage';
 import EditItemPage from './pages/EditItemPage';
 import AdminUsersPage from './pages/AdminUsersPage';
 import AdminNgosPage from './pages/AdminNgosPage';
+import AdminNgoVerificationPage from './pages/AdminNgoVerificationPage';
+import AdminUserReportsPage from './pages/AdminUserReportsPage';
+import AdminStatsPage from './pages/AdminStatsPage';
+import NgoReportUserPage from './pages/NgoReportUserPage';
 import AboutPage from './pages/AboutPage';
 import ContactPage from './pages/ContactPage';
 import MyRequestsPage from './pages/MyRequestsPage';
 import ConversationsListPage from './pages/ConversationsListPage';
 import NgoRequestsPage from './pages/NgoRequestsPage';
+import CreateCampaignPage from './pages/CreateCampaignPage';
+import CampaignDetailsPage from './pages/CampaignDetailsPage';
+import RewardsBadgesPage from './pages/RewardsBadgesPage';
+import LeaderboardPage from './pages/LeaderboardPage';
+import ImpactFeedPage from './pages/ImpactFeedPage';
+import CreateImpactUpdatePage from './pages/CreateImpactUpdatePage';
 
 
 
@@ -45,6 +55,9 @@ function App() {
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignUpPage />} />
             <Route path="/item/:itemId" element={<ItemDetailsPage />} />
+            <Route path="/campaign/:id" element={<CampaignDetailsPage />} />
+            <Route path="/leaderboard" element={<LeaderboardPage />} />
+            <Route path="/impact-feed" element={<ImpactFeedPage />} />
             <Route path="/about" element={<AboutPage />} />
             <Route path="/contact" element={<ContactPage />} />
             {/* <Route path="/privacy" element={<PrivacyPolicyPage />} /> */}
@@ -70,6 +83,11 @@ function App() {
                 <MyRequestsPage />
               </ProtectedRoute>
             }/>
+            <Route path="/rewards-badges" element={
+              <ProtectedRoute allowedRoles={['individual']}>
+                <RewardsBadgesPage />
+              </ProtectedRoute>
+            }/>
 
             {/* --- NGO Routes --- */}
             <Route path="/ngo-dashboard" element={
@@ -80,6 +98,21 @@ function App() {
             <Route path="/ngo-requests" element={
               <ProtectedRoute allowedRoles={['ngo']}>
                 <NgoRequestsPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/ngo/report-user" element={
+              <ProtectedRoute allowedRoles={['ngo']}>
+                <NgoReportUserPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/ngo/create-campaign" element={
+              <ProtectedRoute allowedRoles={['ngo']}>
+                <CreateCampaignPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/ngo/create-impact-update" element={
+              <ProtectedRoute allowedRoles={['ngo']}>
+                <CreateImpactUpdatePage />
               </ProtectedRoute>
             }/>
 
@@ -107,6 +140,21 @@ function App() {
             <Route path="/admin/ngos" element={
               <ProtectedRoute allowedRoles={['admin']}>
                 <AdminNgosPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/admin/ngo-verification" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminNgoVerificationPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/admin/user-reports" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminUserReportsPage />
+              </ProtectedRoute>
+            }/>
+            <Route path="/admin/stats" element={
+              <ProtectedRoute allowedRoles={['admin']}>
+                <AdminStatsPage />
               </ProtectedRoute>
             }/>
             

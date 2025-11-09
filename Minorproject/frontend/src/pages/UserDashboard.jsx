@@ -47,17 +47,36 @@ const UserDashboard = () => {
       <h1>Welcome to your Dashboard, {user ? user.name : 'User'}!</h1>
       <p>Here you can track the status of all the items you have donated.</p>
       
-      <div style={{ marginBottom: '2rem' }}>
+      <div style={{ marginBottom: '2rem', display: 'flex', gap: '1rem', flexWrap: 'wrap' }}>
         <Link to="/my-requests" style={{ 
           display: 'inline-block',
           padding: '0.75rem 1.5rem',
           backgroundColor: 'var(--primary-color)',
           color: 'white',
           textDecoration: 'none',
-          borderRadius: '4px',
-          marginRight: '1rem'
+          borderRadius: '4px'
         }}>
           View Requests for My Items
+        </Link>
+        <Link to="/rewards-badges" style={{ 
+          display: 'inline-block',
+          padding: '0.75rem 1.5rem',
+          backgroundColor: '#f59e0b',
+          color: 'white',
+          textDecoration: 'none',
+          borderRadius: '4px'
+        }}>
+          🏆 Rewards & Badges
+        </Link>
+        <Link to="/leaderboard" style={{ 
+          display: 'inline-block',
+          padding: '0.75rem 1.5rem',
+          backgroundColor: '#8b5cf6',
+          color: 'white',
+          textDecoration: 'none',
+          borderRadius: '4px'
+        }}>
+          📊 Leaderboard
         </Link>
       </div>
       

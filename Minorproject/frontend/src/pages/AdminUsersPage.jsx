@@ -2,7 +2,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getUsersByRole } from '../api/adminService';
-import { getAllItems, deleteItem } from '../api/itemsService';
+import { getAllItems } from '../api/itemsService';
 
 const AdminUsersPage = () => {
   const navigate = useNavigate();
@@ -20,7 +20,7 @@ const AdminUsersPage = () => {
       getAllItems() 
     ])
     .then(([userData, itemData]) => {
-      setUsers(userData);
+      setUsers(userData.users || userData || []);
       setItems(itemData || []);
       setLoading(false);
     })
@@ -40,20 +40,6 @@ const AdminUsersPage = () => {
     return items.filter(item => item.user_id === userId);
   };
 
-  const handleDeleteItem = async (itemId, itemTitle) => {
-    if (!window.confirm(`Are you sure you want to delete "${itemTitle}"? This action cannot be undone.`)) {
-      return;
-    }
-
-    try {
-      await deleteItem(itemId);
-      alert('Item deleted successfully!');
-      loadData(); // Reload data
-    } catch (err) {
-      console.error('Error deleting item:', err);
-      alert('Failed to delete item: ' + (err.message || 'Unknown error'));
-    }
-  };
 
   const handleViewItem = (itemId) => {
     navigate(`/item/${itemId}`);
@@ -98,17 +84,12 @@ const AdminUsersPage = () => {
     color: 'white'
   };
 
-  const deleteButtonStyle = {
-    ...buttonStyle,
-    backgroundColor: '#dc3545',
-    color: 'white'
-  };
 
   return (
     <div style={{ padding: '2rem' }}>
       <h1>Manage Users (Donators)</h1>
       <p style={{ color: '#666', marginBottom: '2rem' }}>
-        View all users and their donated items. You can view item details or delete items.
+        View all users and their donated items. You can view item details.
       </p>
 
       {error && (
@@ -166,13 +147,6 @@ const AdminUsersPage = () => {
                                   title="View item details"
                                 >
                                   View
-                                </button>
-                                <button
-                                  style={deleteButtonStyle}
-                                  onClick={() => handleDeleteItem(item.id, item.title)}
-                                  title="Delete this item"
-                                >
-                                  Delete
                                 </button>
                               </div>
                             </div>
