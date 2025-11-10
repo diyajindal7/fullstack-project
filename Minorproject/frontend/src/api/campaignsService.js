@@ -9,7 +9,10 @@ export const getCampaigns = async (category = null, search = null) => {
     if (search) params.append('search', search);
     if (params.toString()) url += '?' + params.toString();
 
-    const response = await fetch(url);
+    const response = await fetch(url, {
+      cache: 'no-store',
+      headers: { 'Cache-Control': 'no-cache' }
+    });
     const data = await response.json();
     if (!response.ok) throw new Error(data.message || 'Failed to fetch campaigns');
     return data.campaigns || [];

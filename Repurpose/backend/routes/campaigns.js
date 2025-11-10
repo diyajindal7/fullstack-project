@@ -14,7 +14,7 @@ router.get('/', async (req, res, next) => {
       SELECT c.*, u.name AS ngo_name, u.email AS ngo_email, u.location AS ngo_location
       FROM ngo_campaigns c
       JOIN users u ON c.ngo_id = u.id
-      WHERE c.approval_status = 'Approved'
+      WHERE c.approval_status IN ('Approved', 'Pending')
         AND (c.end_date IS NULL OR c.end_date >= CURDATE())
     `;
     const params = [];
@@ -52,7 +52,7 @@ router.get('/:id', async (req, res, next) => {
       SELECT c.*, u.name AS ngo_name, u.email AS ngo_email, u.location AS ngo_location
       FROM ngo_campaigns c
       JOIN users u ON c.ngo_id = u.id
-      WHERE c.id = ? AND c.approval_status = 'Approved'
+      WHERE c.id = ? AND c.approval_status IN ('Approved', 'Pending')
     `;
 
     const [results] = await db.query(query, [id]);
