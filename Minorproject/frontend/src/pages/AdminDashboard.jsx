@@ -1,23 +1,24 @@
 // src/pages/AdminDashboard.jsx
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom'; // 1. Import useNavigate
+import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
+import AOS from 'aos';
+import 'aos/dist/aos.css';
+
 import { useAuth } from '../hooks/useAuth';
-import Button from '../components/common/Button'; // 2. Import your Button
+import Button from '../components/common/Button';
 import API_BASE_URL from '../api/apiClient';
 
 const AdminDashboard = () => {
   const { user } = useAuth();
-  const navigate = useNavigate(); // 3. Get the navigate function
-
-  // Style for the button wrapper to control width
-  const buttonWrapperStyle = {
-    maxWidth: '400px',
-    marginBottom: '1rem',
-  };
+  const navigate = useNavigate();
 
   const [stats, setStats] = useState(null);
   const [loadingStats, setLoadingStats] = useState(false);
   const [statsError, setStatsError] = useState('');
+
+  useEffect(() => {
+    AOS.init({ duration: 900, once: true });
+  }, []);
 
   async function fetchAdminStats() {
     try {
@@ -27,66 +28,67 @@ const AdminDashboard = () => {
       const res = await fetch(`${API_BASE_URL}/api/admins/stats`, {
         headers: { Authorization: token ? `Bearer ${token}` : '' },
       });
-      if (!res.ok) {
-        const text = await res.text();
-        throw new Error(text || `Failed: ${res.status}`);
-      }
+      if (!res.ok) throw new Error("Could not fetch stats");
       const data = await res.json();
       setStats(data);
-    } catch (e) {
-      setStatsError(e.message || 'Failed to fetch stats');
+    } catch (err) {
+      setStatsError(err.message);
     } finally {
       setLoadingStats(false);
     }
   }
 
   return (
-    <div>
-      <h1>Admin Dashboard</h1>
-      <p>Welcome, Administrator {user ? user.name : ''}!</p>
-      
-      {/* 4. Use Buttons with onClick to navigate */}
-      <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/categories')}>
-          Manage Categories
-        </Button>
-      </div>
+    <div className="admin-dashboard-container" data-aos="fade-up">
 
-      <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/users')}>
-          Manage Users (Donators)
-        </Button>
-      </div>
+      <h1 className="admin-dashboard-title" data-aos="zoom-in">
+        Admin Dashboard
+      </h1>
+      <p className="admin-dashboard-welcome" data-aos="fade-up">
+        Welcome, <strong>{user?.name}</strong> 👋 Manage the platform efficiently.
+      </p>
 
-      <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/ngos')}>
-          Manage NGOs (Requesters)
-        </Button>
-      </div>
+      {/* Action Cards */}
+      <div className="admin-dashboard-grid">
+        
+        <div className="admin-card" data-aos="zoom-in" onClick={() => navigate('/admin/categories')}>
+          <h3>Manage Categories</h3>
+          <p>Create, edit and organize item categories.</p>
+        </div>
 
-      <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/ngo-verification')}>
-          Verify NGOs
-        </Button>
-      </div>
+        <div className="admin-card" data-aos="zoom-in" onClick={() => navigate('/admin/users')}>
+          <h3>Manage Donators</h3>
+          <p>View and moderate donor accounts.</p>
+        </div>
 
-      <div style={buttonWrapperStyle}>
-        <Button variant="primary" onClick={() => navigate('/admin/user-reports')}>
-          User Reports
-        </Button>
-      </div>
+        <div className="admin-card" data-aos="zoom-in" onClick={() => navigate('/admin/ngos')}>
+          <h3>Manage NGOs</h3>
+          <p>Handle requester organizations.</p>
+        </div>
 
-      <div style={buttonWrapperStyle}>
-        <Button variant="secondary" onClick={() => navigate('/admin/stats')}>
-          View Platform Stats
-        </Button>
+        <div className="admin-card" data-aos="zoom-in" onClick={() => navigate('/admin/ngo-verification')}>
+          <h3>Verify NGOs</h3>
+          <p>Approve or reject NGO applications.</p>
+        </div>
+
+        <div className="admin-card" data-aos="zoom-in" onClick={() => navigate('/admin/user-reports')}>
+          <h3>User Reports</h3>
+          <p>Review reported issues.</p>
+        </div>
+
+        <div className="admin-card" data-aos="zoom-in" onClick={fetchAdminStats}>
+          <h3>View Platform Stats</h3>
+          <p>See usage insights.</p>
+        </div>
+
       </div>
 
       {loadingStats && <p>Loading stats...</p>}
       {statsError && <p style={{ color: 'red' }}>{statsError}</p>}
-      {stats && stats.success && (
-        <div>
-          <h3>Stats</h3>
+
+      {stats && (
+        <div className="admin-stats-box" data-aos="fade-up">
+          <h3>📊 Platform Stats</h3>
           <ul>
             <li>Total Users: {stats.users?.total}</li>
             <li>Total Items: {stats.items?.total}</li>
@@ -94,6 +96,7 @@ const AdminDashboard = () => {
           </ul>
         </div>
       )}
+
     </div>
   );
 };

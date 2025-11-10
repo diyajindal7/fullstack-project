@@ -5,7 +5,59 @@
 /* ============================================
    EARTHY GREEN COMMUNITY SUSTAINABILITY THEME
    ============================================ */
-
+   .admin-cat-container {
+    max-width: 800px;
+    margin: auto;
+    padding: 30px 20px;
+  }
+  
+  .admin-cat-title {
+    text-align: center;
+    font-size: 2rem;
+    margin-bottom: 30px;
+    color: #2c3e50;
+  }
+  
+  .admin-cat-form {
+    background: #ffffff;
+    padding: 20px;
+    border-radius: 10px;
+    border-left: 4px solid #4caf50;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+    margin-bottom: 35px;
+    transition: 0.3s ease;
+  }
+  .admin-cat-form:hover {
+    transform: translateY(-4px);
+  }
+  
+  .admin-cat-sub-title {
+    margin-bottom: 15px;
+    color: #34495e;
+  }
+  
+  .admin-cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+  }
+  
+  .admin-cat-item {
+    background: #fff;
+    border-radius: 10px;
+    padding: 14px 18px;
+    box-shadow: 0 3px 8px rgba(0,0,0,0.05);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-left: 4px solid #4caf50;
+    transition: 0.3s ease;
+  }
+  .admin-cat-item:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.1);
+  }
+  
 /* Global Background - Soft Green Gradient */
 @layer base {
   body {
@@ -66,3 +118,77 @@ html {
 ::-webkit-scrollbar-thumb:hover {
   @apply bg-emerald-500;
 }
+
+
+
+
+.admin-dashboard-container {
+  max-width: 1100px;
+  margin: auto;
+  padding: 40px 20px;
+}
+
+.admin-dashboard-title {
+  text-align: center;
+  font-size: 2.3rem;
+  margin-bottom: 10px;
+  color: #2c3e50;
+}
+
+.admin-dashboard-welcome {
+  text-align: center;
+  margin-bottom: 40px;
+  font-size: 1.1rem;
+  color: #555;
+}
+
+.admin-dashboard-grid {
+  display: grid;
+  gap: 25px;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+}
+
+.admin-card {
+  background: #fff;
+  border-left: 6px solid #4caf50;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(0,0,0,0.07);
+  cursor: pointer;
+  transition: 0.3s;
+}
+.admin-card:hover {
+  transform: translateY(-8px);
+  box-shadow: 0 8px 20px rgba(0,0,0,0.14);
+}
+
+.admin-card h3 {
+  color: #2e7d32;
+  margin-bottom: 8px;
+}
+
+.admin-card p {
+  color: #444;
+  font-size: 0.95rem;
+}
+
+.admin-stats-box {
+  margin-top: 40px;
+  background: #fff;
+  padding: 25px;
+  border-radius: 12px;
+  box-shadow: 0 4px 16px rgba(0,0,0,0.06);
+}
+
+
+
+.item-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 24px;
+  padding: 20px 0;
+}
+
+@media (max-width: 1200px) { .item-grid { grid-template-columns: repeat(3, 1fr); } }
+@media (max-width: 900px) { .item-grid { grid-template-columns: repeat(2, 1fr); } }
+@media (max-width: 600px) { .item-grid { grid-template-columns: repeat(1, 1fr); } }

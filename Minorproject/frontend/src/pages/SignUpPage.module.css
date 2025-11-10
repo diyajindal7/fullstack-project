@@ -1,0 +1,85 @@
+.pageWrapper {
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background: linear-gradient(145deg, #e8ffe8, #d0f7d0);
+  }
+  
+  .formContainer {
+    width: 100%;
+    max-width: 420px;
+    padding: 2.2rem;
+    border-radius: 12px;
+  
+    background: #ffffff;
+    border: 1px solid #a5d6a7;
+  
+    box-shadow:
+      0 4px 10px rgba(0, 0, 0, 0.06),
+      0 8px 25px rgba(76, 175, 80, 0.18);
+  
+    transition: 0.3s ease-in-out transform, 0.3s ease-in-out box-shadow;
+  }
+  
+  .formContainer:hover {
+    transform: translateY(-6px);
+    box-shadow:
+      0 6px 14px rgba(0, 0, 0, 0.08),
+      0 10px 30px rgba(76, 175, 80, 0.25);
+  }
+  
+  .title {
+    text-align: center;
+    font-size: 1.8rem;
+    margin-bottom: 1.4rem;
+    font-weight: 600;
+    color: #2e7d32;
+  }
+  
+  .errorBox {
+    background: #ffebee;
+    border-left: 4px solid #d32f2f;
+    color: #b71c1c;
+    padding: 0.8rem;
+    margin-bottom: 1rem;
+    border-radius: 6px;
+    font-size: 0.95rem;
+  }
+  
+  .selectLabel {
+    display: block;
+    margin-bottom: 6px;
+    font-weight: 500;
+    color: #444;
+  }
+  
+  /* input & select unified style */
+  .formContainer input,
+  .formContainer select,
+  .formContainer textarea {
+    width: 100%;
+    padding: 12px;
+    border-radius: 8px;
+    border: 1.8px solid #5f925e;
+    background-color: #f9fef9;
+    font-size: 1rem;
+    margin-bottom: 1.25rem;
+    transition: 0.25s ease;
+    color: #1d3b1f;
+  }
+  
+  .formContainer input::placeholder,
+  .formContainer textarea::placeholder {
+    color: #6e6e6e;
+  }
+  
+  .formContainer input:focus,
+  .formContainer textarea:focus,
+  .formContainer select:focus {
+    outline: none;
+    border-color: #000;
+    background-color: #ffffff;
+    box-shadow: 0 0 6px rgba(0,0,0,0.25);
+  }
+  
